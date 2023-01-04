@@ -1,0 +1,48 @@
+<!-- courses.html -->
+
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mt-4">
+  <h5 class="text-center courses-header">{{ course['course_name'] }}</h3>
+  <table class="table mt-4">
+    <tr>
+      <th>Section</th>
+      <td>{{ course['section'] }}</td>
+    </tr>
+    <tr>
+      <th>Instructor</th>
+      <td>{{ course['instructor'] }}
+        <a href="https://www.ratemyprofessors.com/search/teachers?query={{course['instructor']}}&sid=U2Nob29sLTEzNDM=" target="_blank">
+            <img src="/static/images/rmp.png" alt="RateMyProfessor" width="30" height=20">
+        </a>
+    </td>
+    </tr>
+    <tr>
+      <th>Days</th>
+      <td>{{ class_days_mapping[course['timing'].split()[0]] if course['timing'] != "TBA" else "To Be Announced" }}</td>
+    </tr>
+    <tr>
+        <th>Timing</th>
+        <td>{{ ' '.join(course['timing'].split()[1:]) if course['timing'] != "TBA" else "To Be Announced" }}</td>
+    </tr>
+    <tr>
+      <th>Room</th>
+      <td>{{ course['room'] }}</td>
+    </tr>
+    <tr>
+      <th>Class Capacity</th>
+      <td>{{ course['capacity'] }}</td>
+    </tr>
+    <!-- <tr>
+      <th>Available</th>
+      <td>{{ course['available'] }}</td>
+    </tr> -->
+    <tr>
+      <th>Format</th>
+      <td>{{ course['format'] }}</td>
+    </tr>
+  </table>
+</div>
+
+{% endblock %}

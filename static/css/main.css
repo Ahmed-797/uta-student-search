@@ -39,6 +39,18 @@
     background-color: transparent;
   }
   
+  header img {
+    height: 5px;
+    width: 5px;
+    float: left;
+  }
+
+  header {
+    background-image: url('/static/images/blaze.png');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  
   body {
     display: flex;
     flex-direction: column;

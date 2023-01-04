@@ -17,26 +17,49 @@
       <td>{{ user['email'] }}</td>
     </tr>
   </table>
+
   {% if classes == [] %}
-  <form action="{{ url_for('fetch_classes', user_id=user['_id'])  }}" method="POST">
-    <button type="submit" class="btn btn-primary mt-4">Get Courses</button>
-  </form>
-  {% else %}
+
   <form action="{{ url_for('fetch_classes', user_id=user['_id']) }}" method="POST">
-    <button type="submit" class="btn btn-secondary mt-4">Refresh Courses List</button>
+    <button type="submit" class="btn btn-primary mt-4">Get Courses</button>
+  </form>  
+
+  {% else %}
+
+  <form action="{{ url_for('fetch_classes', user_id=user['_id']) }}" method="POST">
+    <button type="submit" class="btn btn-primary mt-4">Refresh Courses List</button>
   </form>
-  <ul class="semester-list mt-4">
-    {% for semester in classes %}
-    <h5 class="semester-header">{{ semester.keys()|first }}</h5>
-    <ul class="class-list">
-      {% for class in semester.values()|first %}
-      <li class="class-item">{{ class }}</li>
+  
+  <table class="table mt-4">
+    <thead>
+      <tr>
+        <th>Semester</th>
+        <th>Courses</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for semester in classes %}
+        <tr>
+          <td>{{ semester.keys()|first }}</td>
+          <td>
+            {% for class in semester.values()|first %}
+            
+            {% if '-' in class %}
+              <a href="{{ url_for('courses', course_id=class.split('-')[1]) }}">{{ class.split('-')[0] }}</a><br>
+            {% else %}
+              {{ class }}<br>
+            {% endif %}
+              
+            {% endfor %}
+          </td>
+        </tr>
       {% endfor %}
-    </ul>
-    <br>
-    {% endfor %}
-  </ul>
+    </tbody>
+  </table>
+
   {% endif %}
+
+
 </div>
 
 {% endblock %}

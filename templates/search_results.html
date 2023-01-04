@@ -9,7 +9,7 @@
   </form>
 
   {% if num_records > 0 %}
-  <p>Found {{ num_records }} records</p>
+  <p>Found {{ num_records if num_records < 100 else '100+' }} records. {{ " Truncated to 25 records." if num_records > 25 else "" }} </p>
 
   <table class="table mt-4">
     <thead>
@@ -19,7 +19,7 @@
       </tr>
     </thead>
     <tbody id="results">
-      {% for user in users %}
+      {% for user in users[:25] %}
       <tr>
         <td><a href="/profile/{{ user['_id'] }}">{{ user['name'] }}</a></td>
         <td>{{ user['email'] }}</td>
@@ -27,10 +27,6 @@
       {% endfor %}
     </tbody>
   </table>
-
-  {% if num_records > 10 %}
-  <button class="btn btn-secondary mt-4" id="load-more">Load More</button>
-  {% endif %}
 
   {% else %}
   <p>No records found</p>
