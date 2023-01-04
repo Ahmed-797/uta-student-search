@@ -1,0 +1,60 @@
+  a {
+    color: #ffffff; /* This sets the link color to white in dark mode */
+    text-decoration: none; /* This removes the underline from the link */
+  }
+  
+  a:hover {
+    color: #00ffff; /* This sets the hover color to a lighter shade of white */
+  }
+  
+  .user-list-item {
+    color: #000; /* black color for light mode */
+  }
+  
+  .dark .user-list-item {
+    color: #555; /* white color for dark mode */
+  }
+
+  #logo {
+    padding-top: 20px;
+    margin-top: 20px;
+  }
+  
+  ul, li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #ddd;
+    padding: 8px;
+    width: 300px;
+    padding: 8px;
+    background-color: transparent;
+  }
+
+  ul, li:hover {
+    background-color: #f2f2f2;
+  }
+
+  ul, li a {
+    background-color: transparent;
+  }
+  
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Helvetica', sans-serif;
+    justify-content: center;
+    font-family: sans-serif;
+    background-color: lightgrey;
+  }
+  
+  h1, h2, h3 {
+    font-family: 'Helvetica', sans-serif;
+    color: darkgrey;
+  }
+  
+  button {
+    background-color: lightblue;
+    color: white;
+  }

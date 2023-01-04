@@ -1,0 +1,39 @@
+<html>
+
+<head>
+  <title>Search</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <style>
+      .form-group {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: center;
+      }
+  
+      .form-control {
+          width: 100%;
+      }
+  </style>
+  
+</head>
+
+<body class="{% if app.config['DARK_MODE'] %}dark{% endif %}">
+  <div id="logo" class="container" style="text-align: center;">
+    <img src="{{ url_for('static', filename='images/a-logo-wordmark.jpg') }}" style="width: 10%; height: 10%;">
+    <h3 class="mt-4">Student Search</h3>
+
+    <div class="form-group">
+      <form action="/search" method="GET">
+          <input class="form-control mt-4" type="text" name="query" placeholder="Enter search query">
+        </br>
+          <button class="btn btn-primary" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>

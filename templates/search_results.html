@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+  <h3 class="mt-4">Search Results</h3>
+
+  <form action="/search" method="GET">
+    <input class="form-control mt-4" type="text" id="query" name="query" placeholder="Enter search query">
+    <button class="btn btn-primary mt-4" type="submit">Search</button>
+  </form>
+
+  {% if num_records > 0 %}
+  <p>Found {{ num_records }} records</p>
+
+  <table class="table mt-4">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody id="results">
+      {% for user in users %}
+      <tr>
+        <td><a href="/profile/{{ user['_id'] }}">{{ user['name'] }}</a></td>
+        <td>{{ user['email'] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if num_records > 10 %}
+  <button class="btn btn-secondary mt-4" id="load-more">Load More</button>
+  {% endif %}
+
+  {% else %}
+  <p>No records found</p>
+  {% endif %}
+  {% endblock %}

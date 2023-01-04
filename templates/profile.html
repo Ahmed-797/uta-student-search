@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mt-4">
+  <h3 class="text-center profile-header">{{ user['name'] }}'s Profile</h3>
+  <table class="table mt-4">
+    <tr>
+      <th>Name</th>
+      <td>{{ user['name'] }}</td>
+    </tr>
+    <tr>
+      <th>ID</th>
+      <td>{{ user['u_eid'] }}</td>
+    </tr>
+    <tr>
+      <th>Email</th>
+      <td>{{ user['email'] }}</td>
+    </tr>
+  </table>
+  {% if classes == [] %}
+  <form action="{{ url_for('fetch_classes', user_id=user['_id'])  }}" method="POST">
+    <button type="submit" class="btn btn-primary mt-4">Get Courses</button>
+  </form>
+  {% else %}
+  <form action="{{ url_for('fetch_classes', user_id=user['_id']) }}" method="POST">
+    <button type="submit" class="btn btn-secondary mt-4">Refresh Courses List</button>
+  </form>
+  <ul class="semester-list mt-4">
+    {% for semester in classes %}
+    <h5 class="semester-header">{{ semester.keys()|first }}</h5>
+    <ul class="class-list">
+      {% for class in semester.values()|first %}
+      <li class="class-item">{{ class }}</li>
+      {% endfor %}
+    </ul>
+    <br>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+
+{% endblock %}

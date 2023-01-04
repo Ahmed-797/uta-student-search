@@ -1,0 +1,20 @@
+<html>
+
+<head>
+  <link href='https://fonts.googleapis.com/css?family=Helvetica' rel='stylesheet'>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <title>{{ title }}</title>
+</head>
+
+<body class="{% if app.config['DARK_MODE'] %}dark{% endif %}">
+  <div class="container" style="text-align: center;">
+    <a class="nav-link" href="{{ url_for('search_form') }}">Back to Homepage</a>
+    {% for message in get_flashed_messages() %}
+    <div class="flash alert alert-primary mt-4" role="alert">{{ message }}</div>
+    {% endfor %}
+    {% block content %}{% endblock %}
+  </div>
+</body>
+
+</html>
