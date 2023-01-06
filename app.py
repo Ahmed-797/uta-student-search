@@ -185,7 +185,7 @@ def fetch_classes(user_id):
     # Save the classes to the 'classes' collection
     record = mongo.db.classes.find_one({'u_eid': u_eid})
 
-    new_record = {'u_eid': u_eid, 'session_id': session_id, 'classes': json.dumps(classes)}
+    new_record = {'u_eid': u_eid, 'session_id': session_id, 'classes': json.dumps(classes), 'timestamp': datetime.datetime.now()}
 
     if not classes:
         new_record['no_classes_found'] = True
