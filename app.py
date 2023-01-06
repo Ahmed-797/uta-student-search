@@ -15,14 +15,16 @@ from flask import Flask, render_template, request, make_response, redirect, url_
 app = Flask(__name__, template_folder='./templates')
 app.config.from_pyfile('config.py')
 
-DB_USERNAME = os.environ['DB_USERNAME'] if 'DB_USERNAME' in os.environ else app.config['DB_USERNAME']
-DB_PASSWORD = os.environ['DB_PASSWORD'] if 'DB_PASSWORD' in os.environ else app.config['DB_PASSWORD']
-DB_PATH = os.environ['DB_PATH'] if 'DB_PATH' in os.environ else app.config['DB_PATH']
-DB_NAME = os.environ['DB_NAME'] if 'DB_NAME' in os.environ else app.config['DB_NAME']
-DB_MODE = os.environ['DB_MODE'] if 'DB_MODE' in os.environ else app.config['DB_MODE']
-COURSE_FETCH_URL = os.environ['COURSE_FETCH_URL'] if 'COURSE_FETCH_URL' in os.environ else app.config['COURSE_FETCH_URL']
-PROGRAM_ID = os.environ['PROGRAM_ID'] if 'PROGRAM_ID' in os.environ else app.config['PROGRAM_ID']
-USER_AGENT = os.environ['USER_AGENT'] if 'USER_AGENT' in os.environ else app.config['USER_AGENT']
+config_data = os.environ if 'DB_USERNAME' in os.environ else app.config
+
+DB_USERNAME = config_data['DB_USERNAME']
+DB_PASSWORD = config_data['DB_PASSWORD']
+DB_PATH = config_data['DB_PATH']
+DB_NAME = config_data['DB_NAME']
+DB_MODE = config_data['DB_MODE']
+COURSE_FETCH_URL = config_data['COURSE_FETCH_URL']
+PROGRAM_ID = config_data['PROGRAM_ID']
+USER_AGENT = config_data['USER_AGENT']
 
 app.config['DARK_MODE'] = False
 app.config["MONGO_URI"] = f"{DB_MODE}://{DB_USERNAME}:{DB_PASSWORD}@{DB_PATH}/{DB_NAME}"
@@ -95,8 +97,10 @@ def profile(user_id):
 
     # Find the classes for the user in the 'classes' collection
     classes = mongo.db.classes.find_one({'u_eid': user['u_eid']})
+    no_classes_found = classes.get('no_classes_found', False) if classes else False
     classes = json.loads(classes['classes']) if classes else []
 
+    # Check if the user has any Spring 2023 classes
     if classes:
         spring_classes_available, semester = False, None
 
@@ -105,18 +109,22 @@ def profile(user_id):
                 spring_classes_available = True
                 break
 
+        # If the user has Spring 2023 classes
         if spring_classes_available:
             spring_classes = semester['Spring 2023']
 
+            # Iterate over the Spring 2023 classes
             for i, course in enumerate(spring_classes):
                 branch, course_id, section_num = course.split(':') if ':' in course else course.split()
 
+                # Create a query to find the course in the 'course_info' collection
                 course_query = {
                     'course_id': course_id.strip(),
                     'section_num': str(int(section_num.strip())),
                     'branch': branch.strip()
                 }
-
+                
+                # Find the course in the 'course_info' collection
                 course_result = mongo.db.course_info.find_one(course_query)
 
                 if course_result and '_id' in course_result:
@@ -124,36 +132,29 @@ def profile(user_id):
                     spring_classes[i] += f'-{id_found}'
 
     # Render the profile template with the user and classes information
-    return render_template('profile.html', user=user, app=app, classes=classes)
+    return render_template('profile.html', user=user, app=app, classes=classes, no_classes_found=no_classes_found)
 
 
 @app.route('/courses/<course_id>')
 def courses(course_id):
     """Fetch and display course information"""
 
+    # Find the course document in the 'course_info' collection
     course = mongo.db.course_info.find_one({'_id': ObjectId(course_id)})
-    class_days_mapping = {'TuTh': 'Tuesday Thursday', 'MoWe': 'Monday Wednesday', 'Fr': 'Friday',
-                          'Mo': 'Monday', 'We': 'Wednesday', 'Tu': 'Tuesday', 'Th': 'Saturday', 'Sa': 'Monday Wednesday Friday'}
+    # Create a mapping of abbreviated day names to full day names
+    class_days_mapping = {
+        'TuTh': 'Tuesday Thursday',
+        'MoWe': 'Monday Wednesday',
+        'Fr': 'Friday',
+        'Mo': 'Monday',
+        'We': 'Wednesday',
+        'Tu': 'Tuesday',
+        'Th': 'Thursday',
+        'Sa':  'Saturday',
+        'MoWeFr' : 'Monday Wednesday Friday'
+    }
+    # Render the courses template with the course and class_days_mapping information
     return render_template('courses.html', app=app, course=course, class_days_mapping=class_days_mapping)
-
-
-def get_courses(term_id, uta_id):
-    """Call API to get list of classes for user"""
-
-    url = COURSE_FETCH_URL
-
-    payload = json.dumps({"termId": term_id, "programId": PROGRAM_ID, "studentId": uta_id})
-    user_agent = USER_AGENT
-    headers = {'User-Agent': user_agent,'Content-Type': 'application/json'}
-
-    response = requests.request("POST", url, headers=headers, data=payload, timeout=30)
-
-    try:
-        result = response.json()[0]
-    except KeyError:
-        result = None
-
-    return result
 
 
 @app.route('/fetch_classes/<user_id>', methods=['POST'])
@@ -184,11 +185,37 @@ def fetch_classes(user_id):
     # Save the classes to the 'classes' collection
     record = mongo.db.classes.find_one({'u_eid': u_eid})
 
-    if not record:
-        mongo.db.classes.insert_one(
-            {'u_eid': u_eid, 'classes': json.dumps(classes), 'session_id': session_id})
-    else:
-        mongo.db.classes.replace_one({'_id': record['_id']}, {'u_eid': u_eid, 'session_id': session_id,
-                                     'classes': json.dumps(classes)}, upsert=True)
+    new_record = {'u_eid': u_eid, 'session_id': session_id, 'classes': json.dumps(classes)}
 
+    if not classes:
+        new_record['no_classes_found'] = True
+
+    if not record:
+        mongo.db.classes.insert_one(new_record)
+    else:
+        mongo.db.classes.replace_one({'_id': record['_id']}, new_record, upsert=True)
+        
     return redirect(url_for('profile', user_id=user_id))
+
+
+def get_courses(term_id, uta_id):
+    """Call API to get list of classes for user"""
+
+    url = COURSE_FETCH_URL
+    
+    # Set the payload for the API call as a JSON object
+    payload = json.dumps({"termId": term_id, "programId": PROGRAM_ID, "studentId": uta_id})
+    user_agent = USER_AGENT
+    headers = {'User-Agent': user_agent,'Content-Type': 'application/json'}
+
+    response = requests.request("POST", url, headers=headers, data=payload, timeout=30)
+
+    # Try to parse the JSON response
+    try:
+        result = response.json()[0]
+    # If the response is not a valid JSON object
+    except KeyError:
+        result = None
+
+    return result
+
