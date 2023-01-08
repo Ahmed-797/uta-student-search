@@ -9,7 +9,7 @@ A web application to search for students and their courses
 - Get a list of courses registered for a specific student
 - Refresh the list of registered courses
 - View detailed course information including instructor name, timing, location
-- Query [RateMyProfessors](https://www.ratemyprofessors.com/) website for with the instructor name
+- Query [RateMyProfessors](https://www.ratemyprofessors.com/) website with the instructor name
 
 ## Requirements
 
@@ -32,5 +32,5 @@ A web application to search for students and their courses
 - View the search results and click on the student to view more detailed information
 - You can view your courses list by clicking on the "Get Courses" button
 - If the student has active registered classes, they will be fetched and printed
-- If the student have changed classes, you can get the updated classes list by clicking on the "Refresh Courses" button
+- You can get the updated classes list by clicking on the "Refresh Courses" button
 - If the course is underlined (has a hyperlink), click on that course to know more information about that course
