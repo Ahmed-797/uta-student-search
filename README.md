@@ -29,8 +29,13 @@ A web application to search for students and their courses
 - Run the application: `flask run`
 - Go to http://localhost:5000 in your web browser
 - Search for students by entering a student name, student ID, or student email in the search bar
+<p align="center"><img src="./static/images/app-screenshots/USS-1.png" width="300" alt="Screenshot 1" title="Screenshot 1"/></p>
 - View the search results and click on the student to view more detailed information
+<p align="center"><img src="./static/images/app-screenshots/USS-2.png" width="300" alt="Screenshot 2" title="Screenshot 2"/></p>
 - You can view your courses list by clicking on the "Get Courses" button
+<p align="center"><img src="./static/images/app-screenshots/USS-3.png" width="300" alt="Screenshot 3" title="Screenshot 3"/></p>
 - If the student has active registered classes, they will be fetched and printed
+<p align="center"><img src="./static/images/app-screenshots/USS-4.png" width="300" alt="Screenshot 4" title="Screenshot 4"/></p>
 - You can get the updated classes list by clicking on the "Refresh Courses" button
 - If the course is underlined (has a hyperlink), click on that course to know more information about that course
+<p align="center"><img src="./static/images/app-screenshots/USS-5.png" width="300" alt="Screenshot 5" title="Screenshot 5"/></p>
