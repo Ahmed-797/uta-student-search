@@ -123,7 +123,7 @@ def profile(user_id):
                     'section_num': str(int(section_num.strip())),
                     'branch': branch.strip()
                 }
-                
+               
                 # Find the course in the 'course_info' collection
                 course_result = mongo.db.course_info.find_one(course_query)
 
