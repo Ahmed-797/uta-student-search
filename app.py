@@ -102,13 +102,14 @@ def profile(user_id):
 
     is_employee =  user['email'] and user['email'].endswith('@uta.edu')
 
-    if is_employee:
-        split_name = user['name'].split()
-        employee_name = f"{split_name[0]} {split_name[-1]}"
-        records = search_employee(employee_name)
+    # complete once webdriver available
+    # if is_employee:
+    #     split_name = user['name'].split()
+    #     employee_name = f"{split_name[0]} {split_name[-1]}"
+    #     records = search_employee(employee_name)
         
-        if records:
-            print(records)
+    #     if records:
+    #         print(records)
 
     # Check if the user has any Spring 2023 classes
     if classes:
