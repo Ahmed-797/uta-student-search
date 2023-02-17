@@ -11,6 +11,7 @@ import pymongo
 from bson import ObjectId
 from flask_pymongo import PyMongo
 from flask import Flask, render_template, request, make_response, redirect, url_for
+#from tests.test import search_employee
 
 app = Flask(__name__, template_folder='./templates')
 app.config.from_pyfile('config.py')
@@ -30,7 +31,6 @@ app.config['DARK_MODE'] = False
 app.config["MONGO_URI"] = f"{DB_MODE}://{DB_USERNAME}:{DB_PASSWORD}@{DB_PATH}/{DB_NAME}"
 
 mongo = PyMongo(app)
-
 
 @app.route('/')
 def search_form():
@@ -99,6 +99,16 @@ def profile(user_id):
     classes = mongo.db.classes.find_one({'u_eid': user['u_eid']})
     no_classes_found = classes.get('no_classes_found', False) if classes else False
     classes = json.loads(classes['classes']) if classes else []
+
+    is_employee =  user['email'] and user['email'].endswith('@uta.edu')
+
+    if is_employee:
+        split_name = user['name'].split()
+        employee_name = f"{split_name[0]} {split_name[-1]}"
+        records = search_employee(employee_name)
+        
+        if records:
+            print(records)
 
     # Check if the user has any Spring 2023 classes
     if classes:
